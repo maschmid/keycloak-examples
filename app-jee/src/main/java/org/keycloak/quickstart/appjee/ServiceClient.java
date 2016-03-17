@@ -41,7 +41,6 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.ssl.TrustStrategy;
 import org.apache.http.util.EntityUtils;
-import org.codehaus.jackson.JsonParseException;
 import org.keycloak.KeycloakSecurityContext;
 import org.keycloak.adapters.AdapterUtils;
 import org.keycloak.util.JsonSerialization;
@@ -165,7 +164,7 @@ public class ServiceClient {
             try {
                 MessageBean message = (MessageBean)JsonSerialization.readValue(entityString, MessageBean.class);
                 return message.getMessage();
-            } catch (JsonParseException x) {
+            } catch (Exception x) {
 				throw new Failure(200, entityString);
 			}
         } catch (Failure f) {
