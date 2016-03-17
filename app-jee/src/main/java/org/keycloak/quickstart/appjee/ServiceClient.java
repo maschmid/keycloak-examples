@@ -40,6 +40,8 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.ssl.TrustStrategy;
+import org.apache.http.util.EntityUtils;
+import org.codehaus.jackson.JsonParseException;
 import org.keycloak.KeycloakSecurityContext;
 import org.keycloak.adapters.AdapterUtils;
 import org.keycloak.util.JsonSerialization;
@@ -156,13 +158,16 @@ public class ServiceClient {
             }
 
             HttpEntity entity = response.getEntity();
-            InputStream is = entity.getContent();
+            //InputStream is = entity.getContent();
+
+			String entityString = EntityUtils.toString(entity, "UTF-8");
+
             try {
-                MessageBean message = (MessageBean)JsonSerialization.readValue(is, MessageBean.class);
+                MessageBean message = (MessageBean)JsonSerialization.readValue(entityString, MessageBean.class);
                 return message.getMessage();
-            } finally {
-                is.close();
-            }
+            } catch (JsonParseException x) {
+				throw new Failure(200, entityString);
+			}
         } catch (Failure f) {
             throw f;
         } catch (Exception e) {
