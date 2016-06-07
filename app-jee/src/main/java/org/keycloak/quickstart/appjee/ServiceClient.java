@@ -16,13 +16,8 @@
  */
 package org.keycloak.quickstart.appjee;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.SSLContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.http.HttpEntity;
@@ -30,16 +25,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.config.Registry;
-import org.apache.http.config.RegistryBuilder;
-import org.apache.http.conn.socket.ConnectionSocketFactory;
-import org.apache.http.conn.socket.PlainConnectionSocketFactory;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.apache.http.ssl.SSLContextBuilder;
-import org.apache.http.ssl.TrustStrategy;
+import org.apache.http.impl.client.HttpClients;
 import org.keycloak.KeycloakSecurityContext;
 import org.keycloak.util.JsonSerialization;
 
@@ -106,7 +92,7 @@ public class ServiceClient {
     public static String callService(HttpServletRequest req, KeycloakSecurityContext session, String action) throws Failure {
         HttpClient client = null;
         try {
-            client = new DefaultHttpClient();
+            client = HttpClients.createDefault();
             HttpGet get = new HttpGet(getServiceUrl(req, session) + "/" + action);
             if (session != null) {
                 get.addHeader("Authorization", "Bearer " + session.getTokenString());
